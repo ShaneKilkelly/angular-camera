@@ -24,8 +24,8 @@ angular.module('omr.directives', [])
     scope:
       type: '@'
       media: '=ngModel'
-      width: '@'
-      height: '@'
+      #width: '@'
+      #height: '@'
       overlaySrc: '='
       countdown: '@'
       captureCallback: '&capture'
@@ -43,6 +43,17 @@ angular.module('omr.directives', [])
           scope.stream.stop()
           return
       )
+
+      ###*
+      * @description Set width and height from video stream
+      ###
+      videoElement = document.querySelector('video')
+      scope.setVideoSize = () ->
+        scope.width = videoElement.videoWidth
+        scope.height = videoElement.videoHeight
+        videoElement.removeEventListener('playing', scope.setVideoSize, false)
+      videoElement.addEventListener('playing', scope.setVideoSize, false)
+
       ###*
       * @description Set mediastream source and notify camera
       ###
@@ -55,6 +66,8 @@ angular.module('omr.directives', [])
             scope.stream = stream
             scope.isLoaded = true
             scope.videoStream = $sce.trustAsResourceUrl(window.URL.createObjectURL(stream))
+
+
         , (error) ->
           scope.$apply ->
             scope.isLoaded = true

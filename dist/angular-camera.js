@@ -13,8 +13,6 @@
         scope: {
           type: '@',
           media: '=ngModel',
-          width: '@',
-          height: '@',
           overlaySrc: '=',
           countdown: '@',
           captureCallback: '&capture',
@@ -22,6 +20,7 @@
           captureMessage: '@'
         },
         link: function (scope, element, attrs, ngModel) {
+          var videoElement;
           scope.activeCountdown = false;
           navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
           window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
@@ -30,6 +29,15 @@
               scope.stream.stop();
             }
           });
+          videoElement = document.querySelector('video');
+          scope.setVideoSize = function () {
+            scope.width = videoElement.videoWidth;
+            scope.height = videoElement.videoHeight;
+            console.log(scope.width);
+            console.log(scope.height);
+            return videoElement.removeEventListener('playing', scope.setVideoSize, false);
+          };
+          videoElement.addEventListener('playing', scope.setVideoSize, false);
           scope.enableCamera = function () {
             return navigator.getUserMedia({
               audio: false,
